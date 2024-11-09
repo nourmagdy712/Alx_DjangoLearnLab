@@ -7,7 +7,7 @@ from relationship_app.models import Library
 
 # Function-based view to list all books
 def list_books(request):
-    return render(request, "relationship_app/list_books.html", {"books": Book.objects.all()})
+    return render(request, "relationship_app/list_books.html", "Book.objects.all()")
 
 # Class-based view to display library details
 class LibraryDetailView(DetailView):
