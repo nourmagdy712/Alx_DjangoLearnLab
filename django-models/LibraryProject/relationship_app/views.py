@@ -4,8 +4,9 @@ from django.shortcuts import render, redirect
 from relationship_app.models import Book
 from django.views.generic import DetailView
 from relationship_app.models import Library
+from django.contrib.auth import login  # Import for user login
+from django.contrib.auth.forms import UserCreationForm  # Import for registration form
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 
 # Function-based view to list all books
@@ -25,7 +26,7 @@ class LibraryDetailView(DetailView):
         context['books'] = self.object.books.all()  # Add books in the library to the context
         return context
     
-    # User login view (uses Django's built-in LoginView)
+   # User login view (uses Django's built-in LoginView)
 class CustomLoginView(LoginView):
     template_name = 'relationship_app/login.html'
 
@@ -38,10 +39,11 @@ def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()  # Create the new user
-            messages.success(request, 'Registration successful. You can now log in!')
-            return redirect('login')
+            user = form.save()  # Save the new user
+            login(request, user)  # Log in the user automatically after registration
+            messages.success(request, 'Registration successful. You are now logged in!')
+            return redirect('home')  # Redirect to home page after successful registration
     else:
         form = UserCreationForm()
-    
+
     return render(request, 'relationship_app/register.html', {'form': form})
