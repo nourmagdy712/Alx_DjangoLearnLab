@@ -2,9 +2,11 @@ from django.shortcuts import render, redirect
 from django.views.generic.detail import DetailView
 from .models import Library
 from .models import Book 
-from django.contrib.auth import login, logout, authenticate
+#from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
+
 
 def list_books(request):
     books = Book.objects.all() 
@@ -71,3 +73,30 @@ def user_register(request):
 @login_required
 def home(request):
     return render(request, 'home.html')
+
+# Check if the user is an admin
+def is_admin(user):
+    return user.profile.role == 'Admin'
+
+# Check if the user is a librarian
+def is_librarian(user):
+    return user.profile.role == 'Librarian'
+
+# Check if the user is a member
+def is_member(user):
+    return user.profile.role == 'Member'
+
+# Admin view - Only accessible by Admin users
+@user_passes_test(is_admin)
+def admin_view(request):
+    return render(request, 'admin_view.html')
+
+# Librarian view - Only accessible by Librarian users
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    return render(request, 'librarian_view.html')
+
+# Member view - Only accessible by Member users
+@user_passes_test(is_member)
+def member_view(request):
+    return render(request, 'member_view.html')
