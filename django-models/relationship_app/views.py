@@ -20,7 +20,7 @@ class LibraryDetailView(DetailView):
         context = super().get_context_data(**kwargs)  
         context['book'] = self.object.books.all()
         return context
-    
+"""
     # View for login
 def user_login(request):
     if request.method == 'POST':
@@ -49,8 +49,25 @@ def user_register(request):
     else:
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
-
 # Example of a protected view
+@login_required
+def home(request):
+    return render(request, 'home.html')
+
+"""
+
+# View for registration
+def user_register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Redirect to login after successful registration
+    else:
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
+
+# Example of a protected view (only accessible by logged-in users)
 @login_required
 def home(request):
     return render(request, 'home.html')
