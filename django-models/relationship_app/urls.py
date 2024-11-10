@@ -12,7 +12,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(template_name='logout.html'), name='logout'),
     
     # Custom Register view
-    path('register/', views.user_register, name='register'),
+    path('register/', views.register, name='register'),
     
     # A protected home page (optional)
     path('', views.home, name='home'),
