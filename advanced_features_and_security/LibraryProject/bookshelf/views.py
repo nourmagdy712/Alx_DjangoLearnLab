@@ -65,6 +65,7 @@ def search_books(request):
     else:
         books = Book.objects.all()
     return render(request, 'bookshelf/book_list.html', {'books': books})
+
 def example_view(request):
     if request.method == 'POST':
         form = ExampleForm(request.POST)
@@ -78,3 +79,4 @@ def example_view(request):
         form = ExampleForm()
 
     return render(request, 'bookshelf/form_example.html', {'form': form})
+
