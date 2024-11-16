@@ -140,6 +140,9 @@ CSP_STYLE_SRC = ("'self'", "https://trusted-styles.com")
 
 SECURE_SSL_REDIRECT = True  # Redirect all HTTP requests to HTTPS
 
+# Ensure that Django recognizes the 'X-Forwarded-Proto' header to manage HTTPS correctly
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # HTTP Strict Transport Security (HSTS)
 SECURE_HSTS_SECONDS = 31536000  # One year in seconds
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to all subdomains
