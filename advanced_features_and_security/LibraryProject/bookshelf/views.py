@@ -65,3 +65,16 @@ def search_books(request):
     else:
         books = Book.objects.all()
     return render(request, 'bookshelf/book_list.html', {'books': books})
+def example_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            title = form.cleaned_data['title']
+            description = form.cleaned_data['description']
+            # For example, save data to a model or do other processing
+            return render(request, 'bookshelf/success.html', {'title': title})
+    else:
+        form = ExampleForm()
+
+    return render(request, 'bookshelf/form_example.html', {'form': form})
