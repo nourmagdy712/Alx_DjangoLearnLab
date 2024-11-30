@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django_filters import rest_framework
 from rest_framework import generics
-from rest_framework.filters import SearchFilter, OrderingFilter as filtersOrderingFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import BookSerializer
 from rest_framework import generics
@@ -70,7 +70,7 @@ class BookFilter(django_filters.FilterSet):
 class BookListView(generics.ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_backends = (filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filterset_class = BookFilter
     search_fields = ['title', 'author__name']  # Enable search on title and author's name
     ordering_fields = ['title', 'publication_year']
