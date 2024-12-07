@@ -105,7 +105,7 @@ def post_detail(request, pk):
     return render(request, 'blog/post_detail.html', {'post': post, 'comments': comments, 'comment_form': comment_form})
 
 # View to edit a comment
-class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
     fields = ['content']
     template_name = 'blog/comment_form.html'
