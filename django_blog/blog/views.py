@@ -104,8 +104,25 @@ def post_detail(request, pk):
 
     return render(request, 'blog/post_detail.html', {'post': post, 'comments': comments, 'comment_form': comment_form})
 
+# View to add a comment
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        # Associate the comment with the logged-in user and the post
+        post = get_object_or_404(Post, pk=self.kwargs['post_id'])
+        form.instance.author = self.request.user
+        form.instance.post = post
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # Redirect back to the post detail page after a successful comment submission
+        return redirect('blog:post_detail', pk=self.kwargs['post_id'])
+
 # View to edit a comment
-class CommentCreateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
     fields = ['content']
     template_name = 'blog/comment_form.html'
