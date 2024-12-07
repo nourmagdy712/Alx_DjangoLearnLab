@@ -1,10 +1,12 @@
 {% load static %}
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     </head>
     <body>
-        <h2>Register</h2>
+        <div class="content">
+            {% block content %}
+            <h2>Register</h2>
         <div class="form-container">
             <form method="post">
                 {% csrf_token %}
@@ -12,5 +14,9 @@
                 <button type="submit">Register</button>
             </form>
         </div>
+            {% endblock %}
+        </div>
+        
+        <script src="{% static 'js/scripts.js' %}"></script>
     </body>
 </html>
