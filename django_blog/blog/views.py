@@ -8,9 +8,10 @@ from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 from .forms import PostForm
 from .forms import CommentForm
+from django.db.models import Q
 
 
 # Create your views here.
@@ -145,3 +146,21 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('blog:post_detail', kwargs={'pk': self.object.post.pk})
+    
+def search_posts(request):
+    query = request.GET.get('q')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    else:
+        posts = Post.objects.all()
+
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})    
+
+def tag_posts(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = tag.posts.all()
+    return render(request, 'blog/tag_posts.html', {'tag': tag, 'posts': posts})

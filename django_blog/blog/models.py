@@ -21,3 +21,14 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.author.username} on {self.post.title}"
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name 
