@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post, Comment, Tag
+from .models import Post, Comment
+from taggit.models import Tag
 from .forms import PostForm
 from .forms import CommentForm
 from django.db.models import Q
@@ -160,7 +161,7 @@ def search_posts(request):
 
     return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})    
 
-def tag_posts(request, tag_name):
+def post_list_by_tag(request, tag_name):
     tag = Tag.objects.get(name=tag_name)
-    posts = tag.posts.all()
-    return render(request, 'blog/tag_posts.html', {'tag': tag, 'posts': posts})
+    posts = Post.objects.filter(tags__name=tag_name)
+    return render(request, 'blog/post_list.html', {'posts': posts, 'tag': tag})
