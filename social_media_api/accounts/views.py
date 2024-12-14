@@ -70,8 +70,8 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
         # Write permissions are only allowed to the author of the post/comment
         return obj.author == request.user
 class UserListView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]  # Only authenticated users can access this
-    permission_classes = [IsAuthenticated]  # This ensures only authenticated users can access this view
+    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users can access this
+    permission_classes = [permissions.IsAuthenticated]  # This ensures only authenticated users can access this view
     queryset = CustomUser.objects.all()  # Query all users
 
     def get(self, request, *args, **kwargs):
