@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework.permissions import IsAuthenticated
 from notifications.models import Notification
+from rest_framework import generics
+from django.shortcuts import get_object_or_404
 
 
 
@@ -46,11 +48,15 @@ class LikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = Post.objects.get(pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
         user = request.user
 
         # Check if the user has already liked the post
-        if Like.objects.filter(user=user, post=post).exists():
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+        if created:
+            return Response({"detail": "Post liked successfully."}, status=status.HTTP_201_CREATED)
+        else:
             return Response({"detail": "You already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create the Like object
