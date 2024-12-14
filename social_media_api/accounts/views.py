@@ -71,6 +71,7 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
         return obj.author == request.user
 class UserListView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]  # Only authenticated users can access this
+    permission_classes = [IsAuthenticated]  # This ensures only authenticated users can access this view
     queryset = CustomUser.objects.all()  # Query all users
 
     def get(self, request, *args, **kwargs):
