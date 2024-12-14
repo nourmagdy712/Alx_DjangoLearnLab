@@ -5,6 +5,7 @@ from .serializers import PostSerializer, CommentSerializer
 from rest_framework.views import APIView
 from .permissions import IsAuthorOrReadOnly
 from rest_framework.response import Response
+from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -14,7 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [permissions.IsAuthorOrReadOnly]
 
     def perform_create(self, serializer):
         # Automatically set the author to the logged-in user
@@ -34,7 +35,9 @@ class FeedView(APIView):
 
     def get(self, request):
         # Get posts from users the current user follows
-        followed_users = request.user.following.all()
-        posts = Post.objects.filter(author__in=followed_users).order_by('-created_at')
+        # followed_users = request.user.following.all()
+        user = self.request.user
+        following_users = user.following.all()  # Assuming `following` is a ManyToManyField for following users
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
