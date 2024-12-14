@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Post, Comment
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 
@@ -61,3 +61,22 @@ class LoginSerializer(serializers.Serializer):
             'user': user,
             'token': token.key  # Return only the token key
         }
+    
+class PostSerializer(serializers.ModelSerializer):
+    # Show the username of the author instead of user ID
+    author = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ['id', 'author', 'title', 'content', 'created_at', 'updated_at']
+
+
+# Comment Serializer
+class CommentSerializer(serializers.ModelSerializer):
+    # Show the username of the author and associate the post
+    author = serializers.StringRelatedField(read_only=True)
+    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())  # Reference to the related post
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'author', 'post', 'content', 'created_at', 'updated_at']
