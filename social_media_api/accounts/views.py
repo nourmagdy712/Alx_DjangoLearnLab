@@ -9,6 +9,11 @@ from rest_framework import permissions
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view
+from rest_framework import generics
+from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
+from accounts.models import CustomUser
+
 
 
 # User Registration View
@@ -64,6 +69,15 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
             return True
         # Write permissions are only allowed to the author of the post/comment
         return obj.author == request.user
+class UserListView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access this
+    queryset = CustomUser.objects.all()  # Query all users
+
+    def get(self, request, *args, **kwargs):
+        # Assuming you have a serializer for your user model
+        users = CustomUser.objects.all()  # Get all users
+        serializer = UserSerializer(users, many=True)  # Serialize the users
+        return Response(serializer.data)  # Return serialized data in response    
 
 User = get_user_model()
 
