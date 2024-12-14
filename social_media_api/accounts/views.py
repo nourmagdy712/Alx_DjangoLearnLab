@@ -5,7 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserRegistrationSerializer, LoginSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
-from rest_framework import viewsets, permissions
+from rest_framework import permissions
+from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view
+
 
 # User Registration View
 class UserRegistrationView(APIView):
@@ -61,4 +65,22 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
         # Write permissions are only allowed to the author of the post/comment
         return obj.author == request.user
 
-  
+User = get_user_model()
+
+@api_view(['POST'])
+def follow_user(request, user_id):
+    user_to_follow = User.objects.get(id=user_id)
+    if user_to_follow == request.user:
+        return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+    request.user.following.add(user_to_follow)
+    return Response({"detail": f"You are now following {user_to_follow.username}"}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def unfollow_user(request, user_id):
+    user_to_unfollow = User.objects.get(id=user_id)
+    if user_to_unfollow == request.user:
+        return Response({"detail": "You cannot unfollow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+    request.user.following.remove(user_to_unfollow)
+    return Response({"detail": f"You have unfollowed {user_to_unfollow.username}"}, status=status.HTTP_200_OK)
