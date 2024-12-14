@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-46ac=he5^(e9ft9n%z7id&i9-f6!z2v(4(=z#m-!!2t4^ktrx8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['NourMagdy.pythonanywhere.com']
 
 
 # Application definition
@@ -140,3 +140,21 @@ SECURE_SSL_REDIRECT = True
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'default_secret_key')  
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'django.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
