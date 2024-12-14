@@ -1,40 +1,36 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializers import UserRegistrationSerializer
+from rest_framework import status
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
-class UserRegistrationSerializer(serializers.ModelSerializer):
-    # You can add more fields based on your model, e.g., bio, profile_picture
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'email', 'first_name', 'last_name']
-        extra_kwargs = {
-            'password': {'write_only': True}  # Ensure password is not returned in responses
-        }
-
-    def create(self, validated_data):
-        # Create the user object
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            password=validated_data['password'],
-            email=validated_data['email'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
-        )
+class UserRegistrationView(APIView):
+    def post(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()  # Create user
+            token = Token.objects.create(user=user)  # Generate a token for the user
+            
+            return Response({
+                "message": "User registered successfully",
+                "user": {
+                    "username": user.username,
+                    "email": user.email,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                },
+                "token": token.key  # Return the token in the response
+            }, status=status.HTTP_201_CREATED)
         
-        # Create the token for the user
-        token = Token.objects.create(user=user)
-        
-        # Return the user along with the token (as part of the response data)
-        return {
-            'user': user,
-            'token': token.key  # Return only the token key (token value)
-        }
-
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
